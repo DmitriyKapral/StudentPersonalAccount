@@ -16,16 +16,16 @@ namespace StudentPersonalAccount.Controllers.Students;
 public class StudentController : BaseCRUDController<Student>
 {
     private readonly IRepository<Student> _repository;
-    private readonly PersonalAccountContext _context;
+    //private readonly PersonalAccountContext _context;
     private readonly IMapper _mapper;
 
     public StudentController(IRepository<Student> repository,
-        PersonalAccountContext context,
+        /*PersonalAccountContext context,*/
         IMapper mapper) : base(repository)
     {
         _mapper = mapper;
         _repository = repository;
-        _context = context;
+        /*_context = context;*/
     }
 
     [HttpGet]
@@ -62,14 +62,14 @@ public class StudentController : BaseCRUDController<Student>
     }
 
     [HttpGet("average/{guid:guid}")]
-    public IActionResult AverageEvalition(Guid guid)
+    public double? AverageEvalition(Guid guid)
     {
         var subjects = GetFullStudentInfoQuery()
             .FirstOrDefault(x => x.Guid == guid)
             ?.Subjects;
 
         if (subjects is null)
-            return Ok(0);
+            return -1;
 
         List<int?> sum = new();
 
@@ -78,10 +78,106 @@ public class StudentController : BaseCRUDController<Student>
             sum.Add(s.Evaluations?.Sum(x => x.Quantity) ?? 0);
         });
 
-        return Ok(sum.Average());
+        return sum.Average();
     }
 
-  
+    /*[HttpPost("test")]
+    public IActionResult TestPost()
+    {
+        *//*List<Group> faculty = new()
+        {
+            new Group()
+            {
+                Name = "ИВТ-162",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+            new Group()
+            {
+                Name = "САПР-1.4",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+            new Group()
+            {
+                Name = "ХТМ-1",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет технологии пищевых производств")
+            },
+            new Group()
+            {
+                Name = "ЭВМ-1.1",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+            new Group()
+            {
+                Name = "САПР-1.3",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+            new Group()
+            {
+                Name = "САПР-1.2",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+            new Group()
+            {
+                Name = "САПР-1.1",
+                Faculty = _context.Faculties.FirstOrDefault(x => x.Name == "Факультет электроники и вычислительной техники")
+            },
+        };*//*
+        List<Student> faculty = new()
+        {
+            new Student()
+            {
+                Name = "Дмитрий",
+                Surname = "Косолапов",
+                Patronymic = "Константинович",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "ЭВМ-1.1"),
+                Subjects = _context.Subjects.ToList()
+            },
+            new Student()
+            {
+                Name = "Андрей",
+                Surname = "Соколов",
+                Patronymic = "Алексеевич",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "САПР-1.4"),
+                Subjects = _context.Subjects.ToList()
+            },
+            new Student()
+            {
+                Name = "Артём",
+                Surname = "Соболев",
+                Patronymic = "Алексеевич",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "САПР-1.1"),
+                Subjects = _context.Subjects.ToList()
+            },
+            new Student()
+            {
+                Name = "Леонид",
+                Surname = "Косовов",
+                Patronymic = "Евгеньевич",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "ЭВМ-1.1"),
+                Subjects = _context.Subjects.ToList()
+            },
+            new Student()
+            {
+                Name = "Андрей",
+                Surname = "Меладзе",
+                Patronymic = "Дмитриевич",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "САПР-1.4"),
+                Subjects = _context.Subjects.ToList()
+            },
+            new Student()
+            {
+                Name = "Дмитрий",
+                Surname = "Беркут",
+                Patronymic = "Валерьевич",
+                Group = _context.Groups.FirstOrDefault(x => x.Name == "САПР-1.3"),
+                Subjects = _context.Subjects.ToList()
+            },
+        };
+        _context.Students.AddRange(faculty);
+        _context.SaveChanges();
+        return Ok(faculty);
+    } */
+
     private IQueryable<Student> GetFullStudentInfoQuery()
     {
         return List
