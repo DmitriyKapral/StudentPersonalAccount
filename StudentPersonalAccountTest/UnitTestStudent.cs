@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using StudentPersonalAccount.Controllers.Students;
 using StudentPersonalAccount.Interfaces;
@@ -22,14 +23,18 @@ namespace StudentPersonalAccountTest
             });
             Guid guid = Guid.NewGuid();
             IMapper mapper = mapperConfig.CreateMapper();
+
             var mock = new Mock<IRepository<Student>>();
             mock.Setup(repo => repo.GetListQuery()).Returns(GetStudents(guid));
             StudentController controller = new(mock.Object, mapper);
 
-            var result = controller.Get().ToString();
+            var result = controller.Get();
+
+            var student = new OkObjectResult(StudentDataViews());
+
 
             Assert.IsNotNull(result);
-            //Assert.AreEqual(, result.ToString);
+            //Assert.AreEqual(student, result);
         }
 
         [TestMethod]

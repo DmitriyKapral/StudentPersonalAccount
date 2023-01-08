@@ -12,6 +12,28 @@ using StudentPersonalAccount.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "EnableCORS",
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:8080/",
+                                              "https://localhost:7263/");
+                      });
+});*/
+
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<PersonalAccountContext>(options => options.UseNpgsql(connection));
@@ -60,6 +82,17 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "_myAllowSpecificOrigins",
+                      builder =>
+                      {
+                          builder.WithOrigins("http://example.com",
+                                              "http://www.contoso.com");
+                      });
+});*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,6 +103,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("EnableCORS");
 
 app.UseAuthorization();
 app.UseAuthentication();

@@ -22,7 +22,7 @@ public class AuthController : BaseCRUDController<Auth>
         _repository = repository;
     }
     [HttpPost("Auth")]
-    public IActionResult AuthUser(LoginData loginData)
+    public IActionResult AuthUser([FromBody]LoginData loginData)
     {
 
         // находим пользователя 
@@ -49,6 +49,7 @@ public class AuthController : BaseCRUDController<Auth>
         {
             access_token = encodedJwt,
             username = user.Login,
+            guid = user.Guid.ToString(),
             access = user.Access
         };
 
