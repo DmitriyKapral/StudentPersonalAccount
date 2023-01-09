@@ -12,13 +12,10 @@ namespace StudentPersonalAccount.Controllers.Auths;
 
 public class AuthController : BaseCRUDController<Auth>
 {
-    private readonly PersonalAccountContext _context;
     private readonly IRepository<Auth> _repository;
 
-    public AuthController(PersonalAccountContext context,
-        IRepository<Auth> repository) : base(repository)
+    public AuthController(IRepository<Auth> repository) : base(repository)
     {
-        _context = context;
         _repository = repository;
     }
     [HttpPost("Auth")]

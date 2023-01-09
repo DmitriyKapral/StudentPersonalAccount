@@ -14,9 +14,7 @@ namespace StudentPersonalAccount.Interfaces
         bool RemoveRange(IEnumerable<T> models);
         bool RemoveRange(IEnumerable<Guid> guids);
         IQueryable<T> GetListQuery();
-        IQueryable<T> GetListQueryWithDeleted();
         List<T> GetList();
-        IEnumerable<T> GetListWithDeleted();
         bool Any(Expression<Func<T, bool>> func);
         T FirstOrDefault(Expression<Func<T, bool>> func);
     }

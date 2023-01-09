@@ -131,19 +131,9 @@ public class Repository<T> : IRepository<T> where T : class, IGuidKey
         return _db.Set<T>().AsNoTracking().AsQueryable();
     }
 
-    public virtual IQueryable<T> GetListQueryWithDeleted()
-    {
-        return _db.Set<T>().AsNoTracking().AsQueryable();
-    }
-
     public virtual List<T> GetList()
     {
         return _db.Set<T>().AsNoTracking().ToList();
-    }
-
-    public virtual IEnumerable<T> GetListWithDeleted()
-    {
-        return _db.Set<T>().AsNoTracking().AsQueryable();
     }
 
     public virtual bool Any(Expression<Func<T, bool>> func)
