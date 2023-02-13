@@ -91,8 +91,10 @@ public class StudentController : BaseCRUDController<Student>
 
         if (student is null)
             return BadRequest();
+
         List<string> subjects = new();
         List<int> sumEvalitions = new();
+
         student.Subjects.ForEach(subject =>
         {
             subjects.Add(subject.Name);
