@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StudentPersonalAccount.EF;
 using StudentPersonalAccount.Interfaces;
+using StudentPersonalAccount.Logging;
 using StudentPersonalAccount.Models;
 using StudentPersonalAccount.Views;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,14 +22,17 @@ public class AuthController : BaseCRUDController<Auth>
     [HttpPost("Auth")]
     public IActionResult AuthUser([FromBody]LoginData loginData)
     {
-
+        Logger.Instance.Log("Начало работы запроса авторизации");
         // находим пользователя 
         Auth? user = ListAll
             .FirstOrDefault(p => p.Login == loginData.Login && p.Password == loginData.Password);
 
         // если пользователь не найден, отправляем статусный код 400
         if (user is null)
+        {
+            Logger.Instance.Log("Пользователь не был найден");
             return BadRequest();
+        }
 
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.Login), new Claim("Id", user.Student.Guid.ToString()) };
         // создаем JWT-токен
@@ -48,7 +52,7 @@ public class AuthController : BaseCRUDController<Auth>
             guid = user.Guid.ToString(),
             access = user.Access
         };
-
+        Logger.Instance.Log("Запрос был завершён");
         return Ok(response);
     }
 

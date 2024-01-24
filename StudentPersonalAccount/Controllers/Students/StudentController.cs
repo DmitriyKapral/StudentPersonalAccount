@@ -9,6 +9,7 @@ using AutoMapper;
 using StudentPersonalAccount.Views;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using StudentPersonalAccount.Logging;
 
 namespace StudentPersonalAccount.Controllers.Students;
 
@@ -32,6 +33,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet]
     public override IActionResult Get()
     {
+        Logger.Instance.Log("Начало работы запроса");
         var student = ListAll;
 
         if (student is null)
@@ -44,6 +46,7 @@ public class StudentController : BaseCRUDController<Student>
             studentDataViews.Add(MappingStudentData(item));
         }
 
+        Logger.Instance.Log("Запрос был выполнен");
         return Ok(studentDataViews);
     }
 
@@ -51,14 +54,19 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("{guid:guid}")]
     public override IActionResult Get(Guid guid)
     {
+        Logger.Instance.Log("Начало работы запроса");
         var student = ListAll
             .FirstOrDefault(p => p.Guid == guid);
 
         if (student is null)
+        {
+            Logger.Instance.Log("Студент не был найден в БД");
             return BadRequest();
-
+        }
 
         var data = MappingStudentData(student);
+
+        Logger.Instance.Log("Запрос был выполнен");
 
         return Ok(data);
     }
@@ -66,12 +74,16 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("average/{guid:guid}")]
     public double? AverageEvalition(Guid guid)
     {
+        Logger.Instance.Log("Начало работы запроса");
         var subjects = ListAll
             .FirstOrDefault(x => x.Guid == guid)
             ?.Subjects;
 
         if (subjects is null)
+        {
+            Logger.Instance.Log("Предметы не были найдены в БД");
             return -1;
+        }
 
         List<int?> sum = new();
 
@@ -79,18 +91,22 @@ public class StudentController : BaseCRUDController<Student>
         {
             sum.Add(s.Evaluations?.Sum(x => x.Quantity) ?? 0);
         });
-
+        Logger.Instance.Log("Запрос был выполнен");
         return sum.Average();
     }
 
     [HttpGet("dataAllSubjects/{guid:guid}")]
     public IActionResult DataAllSubjectsForStudent(Guid guid)
     {
+        Logger.Instance.Log("Начало работы запроса");
         var student = ListAll
             .FirstOrDefault(x => x.Guid == guid);
 
         if (student is null)
+        {
+            Logger.Instance.Log("Студент не был найден в БД");
             return BadRequest();
+        }
         List<string> subjects = new();
         List<int> sumEvalitions = new();
         student.Subjects.ForEach(subject =>
@@ -99,7 +115,7 @@ public class StudentController : BaseCRUDController<Student>
             var evaluations = subject.Evaluations?.Where(s => s.StudentId == student.Guid);
             sumEvalitions.Add(evaluations?.Sum(x => x.Quantity) ?? 0);
         });
-
+        Logger.Instance.Log("Запрос был выполнен");
         return Ok(new { subjects, sumEvalitions });
 
     }
