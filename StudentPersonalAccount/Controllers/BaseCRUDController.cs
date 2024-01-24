@@ -7,7 +7,7 @@ using System.Linq;
 namespace StudentPersonalAccount.Controllers;
 
 //[ApiController]
-public abstract class BaseCRUDController<T> : ControllerBase
+public abstract class BaseCRUDController<T> : ControllerBase, IBaseCRUDController<T>
     where T : IGuidKey
 {
     /// <summary>
