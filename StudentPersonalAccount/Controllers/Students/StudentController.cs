@@ -32,7 +32,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet]
     public override IActionResult Get()
     {
-        var student = ListWithAttachmentsAndFilter();
+        var student = ListAll;
 
         if (student is null)
             return BadRequest();
@@ -51,7 +51,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("{guid:guid}")]
     public override IActionResult Get(Guid guid)
     {
-        var student = ListWithAttachmentsAndFilter()
+        var student = ListAll
             .FirstOrDefault(p => p.Guid == guid);
 
         if (student is null)
@@ -66,7 +66,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("average/{guid:guid}")]
     public double? AverageEvalition(Guid guid)
     {
-        var subjects = ListWithAttachmentsAndFilter()
+        var subjects = ListAll
             .FirstOrDefault(x => x.Guid == guid)
             ?.Subjects;
 
@@ -86,7 +86,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("dataAllSubjects/{guid:guid}")]
     public IActionResult DataAllSubjectsForStudent(Guid guid)
     {
-        var student = ListWithAttachmentsAndFilter()
+        var student = ListAll
             .FirstOrDefault(x => x.Guid == guid);
 
         if (student is null)

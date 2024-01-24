@@ -23,7 +23,7 @@ public class AuthController : BaseCRUDController<Auth>
     {
 
         // находим пользователя 
-        Auth? user = ListWithAttachmentsAndFilter()
+        Auth? user = ListAll
             .FirstOrDefault(p => p.Login == loginData.Login && p.Password == loginData.Password);
 
         // если пользователь не найден, отправляем статусный код 400
