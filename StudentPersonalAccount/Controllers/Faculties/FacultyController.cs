@@ -20,4 +20,9 @@ public class FacultyController : BaseCRUDController<Faculty>
         _repository = repository;
         _context = context;
     }
+
+    protected override IQueryable<Faculty> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery();
+    }
 }

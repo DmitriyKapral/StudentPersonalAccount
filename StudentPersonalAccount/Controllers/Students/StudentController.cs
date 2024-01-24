@@ -32,7 +32,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet]
     public override IActionResult Get()
     {
-        var student = GetFullStudentInfoQuery();
+        var student = ListWithAttachmentsAndFilter();
 
         if (student is null)
             return BadRequest();
@@ -51,7 +51,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("{guid:guid}")]
     public override IActionResult Get(Guid guid)
     {
-        var student = GetFullStudentInfoQuery()
+        var student = ListWithAttachmentsAndFilter()
             .FirstOrDefault(p => p.Guid == guid);
 
         if (student is null)
@@ -66,7 +66,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("average/{guid:guid}")]
     public double? AverageEvalition(Guid guid)
     {
-        var subjects = GetFullStudentInfoQuery()
+        var subjects = ListWithAttachmentsAndFilter()
             .FirstOrDefault(x => x.Guid == guid)
             ?.Subjects;
 
@@ -86,7 +86,7 @@ public class StudentController : BaseCRUDController<Student>
     [HttpGet("dataAllSubjects/{guid:guid}")]
     public IActionResult DataAllSubjectsForStudent(Guid guid)
     {
-        var student = GetFullStudentInfoQuery()
+        var student = ListWithAttachmentsAndFilter()
             .FirstOrDefault(x => x.Guid == guid);
 
         if (student is null)
@@ -104,18 +104,6 @@ public class StudentController : BaseCRUDController<Student>
 
     }
 
-   
-
-    private IQueryable<Student> GetFullStudentInfoQuery()
-    {
-        return List
-            .Include(x => x.Subjects)
-            .ThenInclude(subjest => subjest.Evaluations)
-            .AsSplitQuery()
-            .Include(x => x.Group)
-            .ThenInclude(group => group.Faculty);
-    }
-
     private StudentDataView MappingStudentData(Student student)
     {
         var data = _mapper.Map<Student, StudentDataView>(student);
@@ -130,5 +118,15 @@ public class StudentController : BaseCRUDController<Student>
             x.Evaluations = evaluations?.ToList();
         });
         return data;
+    }
+
+    protected override IQueryable<Student> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery()
+            .Include(x => x.Subjects)
+            .ThenInclude(subjest => subjest.Evaluations)
+            .AsSplitQuery()
+            .Include(x => x.Group)
+            .ThenInclude(group => group.Faculty);
     }
 }

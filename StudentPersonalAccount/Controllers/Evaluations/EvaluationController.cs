@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using StudentPersonalAccount.EF;
 using StudentPersonalAccount.Interfaces;
@@ -19,5 +20,12 @@ public class EvaluationController : BaseCRUDController<Evaluation>
     {
         _repository = repository;
         _context = context;
+    }
+
+    protected override IQueryable<Evaluation> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery()
+            .Include(x => x.Subject)
+            .Include(x => x.Student);
     }
 }

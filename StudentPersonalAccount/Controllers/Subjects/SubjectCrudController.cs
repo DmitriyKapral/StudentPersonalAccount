@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
+using Microsoft.EntityFrameworkCore;
 using StudentPersonalAccount.EF;
 using StudentPersonalAccount.Interfaces;
 using StudentPersonalAccount.Models;
-using StudentPersonalAccount.Views;
-using System.ComponentModel;
 
 namespace StudentPersonalAccount.Controllers.Subjects;
 
@@ -20,5 +18,12 @@ public class SubjectController : BaseCRUDController<Subject>
     {
         _repository = repository;
         _context = context;
+    }
+
+    protected override IQueryable<Subject> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery()
+            .Include(x => x.Students)
+            .Include(x => x.Evaluations);
     }
 }

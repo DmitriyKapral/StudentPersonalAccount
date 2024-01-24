@@ -27,6 +27,11 @@ public abstract class BaseCRUDController<T> : ControllerBase, IBaseCRUDControlle
     protected virtual IQueryable<T> List => _repository.GetListQuery();
 
     /// <summary>
+    /// Получение списка с вложениями и фильтрацией
+    /// </summary>
+    protected virtual IQueryable<T> ListAll => ListWithAttachmentsAndFilter();
+
+    /// <summary>
     /// Получение списка всех записей
     /// </summary>
     /// <returns></returns>
@@ -154,4 +159,10 @@ public abstract class BaseCRUDController<T> : ControllerBase, IBaseCRUDControlle
 
         return StatusCode(500, "Не удалось обновить запись");
     }
+
+    /// <summary>
+    /// Шаблонный метод для вывода вложений и фильтрации списка
+    /// </summary>
+    /// <returns></returns>
+    protected abstract IQueryable<T> ListWithAttachmentsAndFilter();
 }

@@ -23,8 +23,7 @@ public class AuthController : BaseCRUDController<Auth>
     {
 
         // находим пользователя 
-        Auth? user = List
-            .Include(x => x.Student)
+        Auth? user = ListWithAttachmentsAndFilter()
             .FirstOrDefault(p => p.Login == loginData.Login && p.Password == loginData.Password);
 
         // если пользователь не найден, отправляем статусный код 400
@@ -51,5 +50,11 @@ public class AuthController : BaseCRUDController<Auth>
         };
 
         return Ok(response);
+    }
+
+    protected override IQueryable<Auth> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery()
+            .Include(x => x.Student);
     }
 }

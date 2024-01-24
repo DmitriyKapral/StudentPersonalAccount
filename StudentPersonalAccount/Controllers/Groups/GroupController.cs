@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using StudentPersonalAccount.EF;
 using StudentPersonalAccount.Interfaces;
@@ -19,5 +20,11 @@ public class GroupController : BaseCRUDController<Group>
     {
         _repository = repository;
         _context = context;
+    }
+
+    protected override IQueryable<Group> ListWithAttachmentsAndFilter()
+    {
+        return _repository.GetListQuery()
+            .Include(x => x.Faculty);
     }
 }
