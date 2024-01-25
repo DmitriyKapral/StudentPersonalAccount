@@ -1,11 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentPersonalAccount.Controllers.Students;
 using StudentPersonalAccount.Interfaces;
 using StudentPersonalAccount.Models;
 using StudentPersonalAccount.Services;
 using StudentPersonalAccount.Views;
+using System.Diagnostics;
 
 namespace StudentPersonalAccountTest
 {
@@ -28,13 +30,12 @@ namespace StudentPersonalAccountTest
             mock.Setup(repo => repo.GetListQuery()).Returns(GetStudents(guid));
             StudentController controller = new(mock.Object, mapper);
 
-            var result = controller.Get();
+            OkObjectResult? result = controller.Get() as OkObjectResult;
 
-            var student = new OkObjectResult(StudentDataViews());
+            List<StudentDataView> student = StudentDataViews(guid);
+            //Assert.IsNotNull(result);
 
-
-            Assert.IsNotNull(result);
-            //Assert.AreEqual(student, result);
+            CollectionAssert.AreEqual(student, result.Value as List<StudentDataView>);
         }
 
         [TestMethod]
@@ -71,7 +72,7 @@ namespace StudentPersonalAccountTest
                     Patronymic = "Константинович",
                     Group = new Group()
                     {
-                        Name = "ИВТ-162",
+                        Name = "САПР-2.4",
                         Faculty = new Faculty()
                         {
                             Name = "ФЭВТ"
@@ -90,14 +91,15 @@ namespace StudentPersonalAccountTest
             return students.AsQueryable();
         }
 
-        private List<StudentDataView> StudentDataViews()
+        private List<StudentDataView> StudentDataViews(Guid guid)
         {
             return new List<StudentDataView>()
             {
                 new StudentDataView()
                 {
+                    Guid = guid,
                     Fio = "Капралов Дмитрий Константинович",
-                    GroupName = "ИВТ-162",
+                    GroupName = "САПР-2.4",
                     FacultyName = "ФЭВТ",
                     Subjects = new List<SubjectsView>()
                     {
@@ -105,6 +107,7 @@ namespace StudentPersonalAccountTest
                         {
                             Name = "Русский",
                             SumEvaluatuion = 0,
+                            Evaluations = new()
                         }
                     }
                 }
